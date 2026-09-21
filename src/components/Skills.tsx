@@ -1,5 +1,6 @@
 import { skills } from "@/data/profile";
 import { Section } from "./Section";
+import { Reveal } from "./Reveal";
 
 export function Skills() {
   return (
@@ -9,9 +10,10 @@ export function Skills() {
       subtitle="As tecnologias que uso entre projetos pessoais, o estágio e a faculdade."
     >
       <div className="mx-auto mt-14 grid max-w-5xl gap-4 sm:grid-cols-2">
-        {skills.map((group) => (
-          <div
+        {skills.map((group, index) => (
+          <Reveal
             key={group.category}
+            delay={100 * index}
             className="rounded-3xl border border-border bg-card px-8 py-10 text-center"
           >
             <h3 className="headline text-xl">{group.category}</h3>
@@ -25,7 +27,7 @@ export function Skills() {
                 </span>
               ))}
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
     </Section>

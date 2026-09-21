@@ -60,3 +60,50 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* Entrada por scroll. Sem JS, o <noscript> no layout mantém tudo visível. */
+[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+[data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/*
+ * Halo que segue o ponteiro dentro do cartão. As coordenadas chegam como
+ * custom properties escritas pelo TiltCard, então o gradiente acompanha o
+ * cursor sem recriar estilo a cada quadro.
+ */
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: var(--spot-opacity, 0);
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    380px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    transparent 70%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .spotlight::before {
+    display: none;
+  }
+}

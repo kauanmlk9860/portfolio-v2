@@ -1,15 +1,47 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
-import { Chip } from "./Chip";
+import { Chip, type DragState } from "./Chip";
 
-export default function HeroScene() {
+
+/**
+ * Afasta a câmera quando a tela é estreita.
+ *
+ * O FOV do three é vertical: num celular em pé, a mesma distância mostra bem
+ * menos largura de mundo e o chip sai cortado pelos lados. A distância mínima
+ * aqui é a que garante a largura da peça em quadro, e a altura e a mira
+ * acompanham para o enquadramento não mudar de forma.
+ */
+function CameraRig() {
+  const camera = useThree((state) => state.camera);
+  const size = useThree((state) => state.size);
+
+  useEffect(() => {
+    const aspect = size.width / Math.max(1, size.height);
+    const distance = Math.max(8.4, 6.5 / aspect);
+    const ratio = distance / 8.4;
+    camera.position.set(0, 4.4 * ratio, distance);
+    camera.lookAt(0, 1.2 * ratio, 0);
+    camera.updateProjectionMatrix();
+  }, [camera, size.width, size.height]);
+
+  return null;
+}
+
+export default function HeroScene({
+  progressRef,
+}: {
+  progressRef: React.RefObject<number>;
+}) {
   const wrapper = useRef<HTMLDivElement>(null);
   const scroll = useRef(0);
   const pointer = useRef({ x: 0, y: 0 });
+  const drag = useRef<DragState>({ x: 0, y: 0, vx: 0, vy: 0, active: false });
+  const last = useRef({ x: 0, y: 0 });
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [dragging, setDragging] = useState(false);
   // Renderizar fora da tela só gasta GPU e bateria à toa.
   const [active, setActive] = useState(true);
 
@@ -52,17 +84,50 @@ export default function HeroScene() {
     return () => observer.disconnect();
   }, []);
 
+  const startDrag = (event: React.PointerEvent) => {
+    drag.current.active = true;
+    drag.current.vx = 0;
+    drag.current.vy = 0;
+    last.current = { x: event.clientX, y: event.clientY };
+    setDragging(true);
+    (event.target as Element).setPointerCapture?.(event.pointerId);
+  };
+
+  const moveDrag = (event: React.PointerEvent) => {
+    if (!drag.current.active) return;
+    const dx = (event.clientX - last.current.x) / 180;
+    const dy = (event.clientY - last.current.y) / 260;
+    last.current = { x: event.clientX, y: event.clientY };
+    drag.current.x += dx;
+    // A inclinação é limitada para o chip não capotar de cabeça para baixo.
+    drag.current.y = Math.max(-0.5, Math.min(0.5, drag.current.y + dy));
+    drag.current.vx = dx;
+    drag.current.vy = dy;
+  };
+
+  const endDrag = () => {
+    drag.current.active = false;
+    setDragging(false);
+  };
+
   return (
-    <div ref={wrapper} className="h-full w-full">
+    <div
+      ref={wrapper}
+      onPointerDown={startDrag}
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerLeave={endDrag}
+      onPointerCancel={endDrag}
+      className={`h-full w-full touch-pan-y ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+    >
       <Canvas
-        camera={{ position: [0, 2.35, 4.1], fov: 38 }}
+        // O FOV vertical é fixo, então o canvas ocupando a viewport inteira
+        // renderiza o chip mais que o dobro do tamanho de antes: a distância
+        // da câmera acompanha essa proporção.
+        camera={{ position: [0, 4.4, 8.4], fov: 38 }}
         dpr={[1, 2]}
         frameloop={active ? "always" : "never"}
         gl={{ antialias: true }}
-        // O R3F aponta a câmera para -Z; sem este lookAt o chip aparece de
-        // perfil, fora do enquadramento.
-        onCreated={({ camera }) => camera.lookAt(0, 0, 0)}
-        // Sem WebGL o Canvas troca pelo conteúdo abaixo em vez de quebrar.
         fallback={
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-muted">
@@ -71,6 +136,7 @@ export default function HeroScene() {
           </div>
         }
       >
+        <CameraRig />
         <ambientLight intensity={0.6} />
         <spotLight
           position={[4, 6, 3]}
@@ -83,7 +149,9 @@ export default function HeroScene() {
 
         <Chip
           scrollRef={scroll}
+          progressRef={progressRef}
           pointerRef={pointer}
+          dragRef={drag}
           reducedMotion={reducedMotion}
         />
 

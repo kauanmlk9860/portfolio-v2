@@ -9,6 +9,17 @@ const links = [
   { href: `mailto:${profile.email}`, label: "E-mail", icon: MailIcon },
 ];
 
+const index = [
+  { href: "#sobre", label: "Sobre mim" },
+  { href: "#projetos", label: "Projetos" },
+  { href: "#conteudo", label: "Conteúdo" },
+  { href: "#trajetoria", label: "Trajetória" },
+  { href: "#habilidades", label: "Habilidades" },
+  { href: "#certificados", label: "Certificados" },
+  { href: "#faq", label: "Perguntas frequentes" },
+  { href: "#contato", label: "Contato" },
+];
+
 export function Masthead() {
   return (
     <header className="mx-auto w-full max-w-3xl px-6 pt-16 sm:pt-24">
@@ -35,7 +46,7 @@ export function Masthead() {
         ))}
       </Reveal>
 
-      <Reveal delay={220} className="mt-10 flex items-center gap-3">
+      <Reveal delay={220} className="mt-8 flex items-center gap-3">
         {profile.available && (
           <>
             <span className="size-2 rounded-full bg-accent" />
@@ -44,6 +55,20 @@ export function Masthead() {
             </span>
           </>
         )}
+      </Reveal>
+
+      {/* Índice: com nove seções, rolar às cegas até o fim não se sustenta. */}
+      <Reveal delay={280} className="mt-10 border-t border-rule pt-6">
+        <p className="hand text-lg text-ink-soft">nesta página</p>
+        <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          {index.map((item) => (
+            <li key={item.href}>
+              <a href={item.href} className="pen-underline">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </Reveal>
     </header>
   );

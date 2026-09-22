@@ -125,3 +125,12 @@ body {
     transition: none !important;
   }
 }
+
+/* O <details> traz um triângulo próprio em cada navegador; o marcador é o "+". */
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::marker {
+  content: "";
+}

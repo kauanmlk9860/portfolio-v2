@@ -32,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <style>{`
             [data-reveal]{opacity:1 !important;transform:none !important}
             [data-facade]{display:none !important}
-            [data-site]{display:block !important}
+            [data-fallback]{position:static !important;width:auto !important;height:auto !important;overflow:visible !important;clip-path:none !important;white-space:normal !important}
           `}</style>
         </noscript>
       </head>

@@ -76,9 +76,18 @@ body {
   background-size: 100% 2px;
 }
 
-/* O site fica fora do fluxo enquanto a fachada está na frente. */
-[data-site][data-entered="false"] {
-  display: none;
+/*
+ * O bloco de reserva carrega o texto de todas as salas. Fica fora da tela em
+ * vez de display:none: assim os buscadores leem o conteúdo, e o <noscript>
+ * do layout o traz de volta para quem não executa JavaScript.
+ */
+[data-fallback] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Entrada por scroll. Sem JS, o <noscript> no layout mantém tudo visível. */

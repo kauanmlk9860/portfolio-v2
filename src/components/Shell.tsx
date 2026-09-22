@@ -2,35 +2,58 @@
 
 import { useState, type ReactNode } from "react";
 import { Facade } from "./facade/Facade";
+import { Hallway, type Topic } from "./facade/Hallway";
+import { Room } from "./site/Room";
+
+type View =
+  | { kind: "facade" }
+  | { kind: "hallway" }
+  | { kind: "room"; id: string };
 
 /**
- * Decide entre a fachada e o site.
+ * Navegação do portfólio: fachada → corredor → sala do assunto.
  *
- * O conteúdo só entra no DOM depois da entrada: renderizado atrás da fachada,
- * o IntersectionObserver já teria revelado tudo que está na primeira dobra, e
- * as animações de scroll chegariam gastas. O CSS em [data-site] cuida disso, e
- * o <noscript> do layout devolve o site a quem não executa JavaScript.
+ * O conteúdo de todas as salas também é renderizado num bloco escondido. Ele
+ * serve a quem não executa JavaScript — que nunca sairia da fachada — e deixa
+ * o texto no HTML para os buscadores, que não vão clicar em porta nenhuma.
  */
-export function Shell({ children }: { children: ReactNode }) {
-  const [entered, setEntered] = useState(false);
+export function Shell({
+  topics,
+  rooms,
+}: {
+  topics: Topic[];
+  rooms: Record<string, ReactNode>;
+}) {
+  const [view, setView] = useState<View>({ kind: "facade" });
+
+  const current =
+    view.kind === "room" ? topics.find((t) => t.id === view.id) : undefined;
 
   return (
     <>
-      {!entered && <Facade onEnter={() => setEntered(true)} />}
-
-      <div data-site data-entered={String(entered)}>
-        {children}
-      </div>
-
-      {entered && (
-        <button
-          type="button"
-          onClick={() => setEntered(false)}
-          className="hand fixed right-5 bottom-5 z-40 rounded-full border border-ink bg-paper px-4 py-2 text-lg shadow-[3px_3px_0_var(--ink)] transition-transform hover:-translate-y-0.5"
-        >
-          voltar à fachada
-        </button>
+      {view.kind === "facade" && (
+        <Facade onEnter={() => setView({ kind: "hallway" })} />
       )}
+
+      {view.kind === "hallway" && (
+        <Hallway
+          topics={topics}
+          onOpen={(id) => setView({ kind: "room", id })}
+          onBack={() => setView({ kind: "facade" })}
+        />
+      )}
+
+      {view.kind === "room" && current && (
+        <Room label={current.label} onBack={() => setView({ kind: "hallway" })}>
+          {rooms[current.id]}
+        </Room>
+      )}
+
+      <div data-fallback className="mx-auto w-full max-w-3xl">
+        {topics.map((topic) => (
+          <div key={topic.id}>{rooms[topic.id]}</div>
+        ))}
+      </div>
     </>
   );
 }

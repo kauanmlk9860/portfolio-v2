@@ -143,3 +143,87 @@ body {
 .faq summary::marker {
   content: "";
 }
+
+/*
+ * Superfícies do corredor em primeira pessoa.
+ *
+ * As texturas são gradientes repetidos, e não imagens: um corredor de 7600px
+ * com textura de bitmap pesaria muito, e a perspectiva CSS reamostra tudo a
+ * cada quadro. Nos planos, o eixo local horizontal é o que corre ao longo do
+ * corredor.
+ */
+.hall-floor {
+  background-color: var(--paper);
+  background-image:
+    /* veios da tábua */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 22px,
+      color-mix(in srgb, var(--rule) 45%, transparent) 22px 23px
+    ),
+    /* encontro entre tábuas */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 88px,
+      var(--ink-soft) 88px 89.6px
+    ),
+    /* emendas ao longo do corredor */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 340px,
+      var(--rule) 340px 341.6px
+    );
+}
+
+.hall-ceiling {
+  background-color: var(--paper);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 240px,
+      var(--rule) 240px 241.4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 300px,
+      color-mix(in srgb, var(--rule) 60%, transparent) 300px 301.4px
+    );
+}
+
+.hall-wall {
+  background-color: var(--paper);
+  background-image:
+    /* fiadas de tijolo */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 44px,
+      var(--rule) 44px 45.4px
+    ),
+    /* juntas verticais */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 132px,
+      var(--rule) 132px 133.4px
+    );
+}
+
+/* Rodapé e trilho de quadros, como faixas no alto e embaixo da parede. */
+.hall-wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--ink), var(--ink)),
+    linear-gradient(var(--rule), var(--rule)),
+    linear-gradient(var(--rule), var(--rule));
+  background-repeat: no-repeat;
+  background-size:
+    100% 2.4px,
+    100% 1.6px,
+    100% 1.6px;
+  background-position:
+    0 calc(100% - 46px),
+    0 calc(100% - 8px),
+    0 214px;
+}

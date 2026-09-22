@@ -61,7 +61,7 @@ export const experience = [
 export const skills = [
   {
     category: "Linguagens",
-    items: ["JavaScript", "TypeScript", "Python", "Kotlin", "C#", "HTML", "CSS"],
+    items: ["JavaScript", "TypeScript", "Java", "Python", "Kotlin", "C#", "HTML", "CSS"],
   },
   {
     category: "Front-end",

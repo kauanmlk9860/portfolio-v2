@@ -30,25 +30,69 @@ export const channels = [
   },
 ];
 
+/**
+ * Formação e cursos.
+ *
+ * Os certificados trazem o RG do titular; aqui ficam só curso, instituição,
+ * carga horária e período. Documento pessoal não vai para página pública.
+ */
 export type Credential = {
   title: string;
   issuer: string;
-  period: string;
+  detail: string;
   status: "Concluído" | "Em andamento";
+  kind: "Formação" | "Curso";
 };
 
 export const credentials: Credential[] = [
   {
-    title: "Técnico em Desenvolvimento de Sistemas",
-    issuer: "SENAI Jandira",
-    period: "Concluído",
-    status: "Concluído",
-  },
-  {
     title: "Sistemas de Informação",
     issuer: "Uninove Memorial",
-    period: "2º semestre",
+    detail: "2º semestre",
     status: "Em andamento",
+    kind: "Formação",
+  },
+  {
+    title: "Técnico em Desenvolvimento de Sistemas",
+    issuer: "SENAI Jandira",
+    detail: "TCC: DoeVida",
+    status: "Concluído",
+    kind: "Formação",
+  },
+  {
+    title: "Desvendando a Indústria 4.0",
+    issuer: "SENAI Jandira",
+    detail: "20 h · mar–jun 2025",
+    status: "Concluído",
+    kind: "Curso",
+  },
+  {
+    title: "Desvendando o ESG",
+    issuer: "SENAI Jandira",
+    detail: "20 h · mar–out 2025",
+    status: "Concluído",
+    kind: "Curso",
+  },
+  {
+    title: "Web 3.0",
+    issuer: "SENAI Jandira",
+    detail: "20 h · mar–out 2025",
+    status: "Concluído",
+    kind: "Curso",
+  },
+  {
+    title: "Fluência: Fundamentos da Inteligência Artificial",
+    issuer: "SENAI Jandira",
+    detail: "8 h · mar–out 2025",
+    status: "Concluído",
+    kind: "Curso",
+  },
+  {
+    title: "Privacidade e Proteção de Dados (LGPD)",
+    issuer: "SENAI Jandira",
+    detail: "4 h · mar–abr 2024",
+    status: "Concluído",
+    kind: "Curso",
   },
 ];
 
@@ -68,12 +112,12 @@ export const faq: FaqEntry[] = [
   {
     question: "Com que tecnologias você trabalha?",
     answer:
-      "No front-end, React, React Native e Tailwind. No back-end, Node.js com Express, Prisma e MySQL. Escrevo em JavaScript e TypeScript, e já entreguei projetos em Python, Kotlin e C#.",
+      "No front-end, React, React Native e Tailwind. No back-end, Node.js com Express, Prisma e MySQL. Escrevo em JavaScript e TypeScript, e já entreguei projetos em Java, Python, Kotlin e C#.",
   },
   {
     question: "Você ainda está estudando?",
     answer:
-      "Estou no 2º semestre de Sistemas de Informação na Uninove Memorial. Antes disso me formei técnico em Desenvolvimento de Sistemas pelo SENAI Jandira.",
+      "Estou no 2º semestre de Sistemas de Informação na Uninove Memorial. Antes disso me formei técnico em Desenvolvimento de Sistemas pelo SENAI Jandira, onde também fiz cursos de Indústria 4.0, ESG, Web 3.0, fundamentos de IA e LGPD.",
   },
   {
     question: "Qual projeto você mostraria primeiro?",

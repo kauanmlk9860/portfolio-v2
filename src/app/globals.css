@@ -1,70 +1,90 @@
 @import "tailwindcss";
 
-/* Paleta preservada do portfólio original — só a linguagem visual mudou. */
+/*
+ * Papel e tinta. O acento roxo vem do portfólio original; a superfície clara
+ * é exigência da estética de caderno — tinta preta sobre creme.
+ */
 :root {
-  --background: #050308;
-  --foreground: #f4f2f8;
-  --muted: #a29cb3;
-  --card: #100c17;
-  --border: #2a2436;
+  --paper: #f6f3ec;
+  --paper-deep: #ebe5d8;
+  --ink: #1b1915;
+  --ink-soft: #6a6459;
+  --rule: #cdc5b3;
   --accent: #a855f7;
-  --accent-foreground: #0b0710;
+  --accent-ink: #f6f3ec;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-card: var(--card);
-  --color-border: var(--border);
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-ink: var(--accent-ink);
   --font-sans: var(--font-inter);
-}
-
-body {
-  background-color: var(--background);
-  color: var(--foreground);
+  --font-serif: var(--font-instrument);
+  --font-hand: var(--font-caveat);
 }
 
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
-/*
- * Títulos no registro da Apple: peso semibold, tracking negativo que aperta
- * conforme o corpo cresce, e entrelinha curta. Nada de caixa alta.
- */
-.headline {
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
+body {
+  background-color: var(--paper);
+  color: var(--ink);
 }
 
-.headline-xl {
-  font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.03;
-}
-
-/* Subtítulo que acompanha o título: mesmo bloco, peso leve, cor apagada. */
-.subhead {
+/* Título em serifa alta, como carimbo de capa de caderno. */
+.title {
+  font-family: var(--font-serif), Georgia, serif;
   font-weight: 400;
   letter-spacing: -0.01em;
-  color: var(--muted);
+  line-height: 1.02;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+/* Anotação à mão, para rótulos e margens. */
+.hand {
+  font-family: var(--font-hand), cursive;
+  font-weight: 600;
+}
+
+/* Moldura de traço: dois cantos desalinhados dão a impressão de desenho. */
+.inked {
+  border: 1.5px solid var(--ink);
+  border-radius: 14px 220px 18px 200px / 200px 16px 180px 20px;
+}
+
+.inked-soft {
+  border: 1.5px solid var(--rule);
+  border-radius: 200px 16px 180px 20px / 14px 220px 18px 200px;
+}
+
+/* Sublinhado que parece feito com caneta, revelado no hover. */
+.pen-underline {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 2px;
+  transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pen-underline:hover,
+.pen-underline:focus-visible {
+  background-size: 100% 2px;
+}
+
+/* O site fica fora do fluxo enquanto a fachada está na frente. */
+[data-site][data-entered="false"] {
+  display: none;
 }
 
 /* Entrada por scroll. Sem JS, o <noscript> no layout mantém tudo visível. */
 [data-reveal="hidden"] {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(20px);
 }
 
 [data-reveal="shown"] {
@@ -75,35 +95,33 @@ html {
     transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/*
- * Halo que segue o ponteiro dentro do cartão. As coordenadas chegam como
- * custom properties escritas pelo TiltCard, então o gradiente acompanha o
- * cursor sem recriar estilo a cada quadro.
- */
-.spotlight::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1;
-  opacity: var(--spot-opacity, 0);
-  transition: opacity 0.35s ease;
-  background: radial-gradient(
-    380px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-    color-mix(in srgb, var(--accent) 16%, transparent),
-    transparent 70%
-  );
+/* Balanço lento da placa pendurada. */
+@keyframes sway {
+  from {
+    transform: rotate(-1.1deg);
+  }
+  to {
+    transform: rotate(1.1deg);
+  }
+}
+
+.sway {
+  transform-origin: 50% 0%;
+  animation: sway 4.5s ease-in-out infinite alternate;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .sway {
+    animation: none;
+  }
+
   [data-reveal] {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
-  }
-
-  .spotlight::before {
-    display: none;
   }
 }

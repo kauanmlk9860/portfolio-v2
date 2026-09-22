@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { CursorGlow } from "@/components/CursorGlow";
-import { ScrollProgress } from "@/components/ScrollProgress";
+import { Caveat, Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-// Inter é o equivalente livre mais próximo da SF Pro usada pela Apple.
-const inter = Inter({
-  variable: "--font-inter",
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+
+const instrument = Instrument_Serif({
+  variable: "--font-instrument",
   subsets: ["latin"],
+  weight: "400",
 });
+
+// Manuscrita para rótulos e anotações de margem.
+const caveat = Caveat({ variable: "--font-caveat", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Kauan Rodrigues — Desenvolvedor Full Stack",
@@ -18,19 +21,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} h-full antialiased`}>
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${instrument.variable} ${caveat.variable} h-full antialiased`}
+    >
       <head>
-        {/* Sem JavaScript o IntersectionObserver nunca roda, então o conteúdo
-            precisa nascer visível em vez de ficar preso em opacity: 0. */}
+        {/* Sem JavaScript nada disso funciona: as revelações nunca disparam,
+            a fachada não tem como sair da frente e o site não é montado. */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>
+          <style>{`
+            [data-reveal]{opacity:1 !important;transform:none !important}
+            [data-facade]{display:none !important}
+            [data-site]{display:block !important}
+          `}</style>
         </noscript>
       </head>
-      <body className="min-h-full flex flex-col">
-        <ScrollProgress />
-        <CursorGlow />
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

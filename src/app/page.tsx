@@ -1,20 +1,17 @@
-import { About } from "@/components/About";
-import { Contact } from "@/components/Contact";
-import { Experience } from "@/components/Experience";
-import { Footer } from "@/components/Footer";
-import { Hero } from "@/components/Hero";
-import { Navbar } from "@/components/Navbar";
-import { Projects } from "@/components/Projects";
-import { Skills } from "@/components/Skills";
-import { Stats } from "@/components/Stats";
+import { Shell } from "@/components/Shell";
+import { About } from "@/components/site/About";
+import { Contact } from "@/components/site/Contact";
+import { Experience } from "@/components/site/Experience";
+import { Footer } from "@/components/site/Footer";
+import { Masthead } from "@/components/site/Masthead";
+import { Projects } from "@/components/site/Projects";
+import { Skills } from "@/components/site/Skills";
 
 export default function Home() {
   return (
-    <>
-      <Navbar />
+    <Shell>
+      <Masthead />
       <main>
-        <Hero />
-        <Stats />
         <About />
         <Projects />
         <Experience />
@@ -22,6 +19,6 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-    </>
+    </Shell>
   );
 }

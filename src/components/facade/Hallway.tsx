@@ -1,7 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  Bench,
+  CeilingLamp,
+  CorridorBall,
+  CorridorPlant,
+  FloorRunner,
+  Sconce,
+  WallFrame,
+} from "./CorridorProps";
 import { TopicDoor } from "./TopicDoor";
+import {
+  DOOR_H,
+  DOOR_W,
+  HEIGHT,
+  LENGTH,
+  PERSPECTIVE,
+  PLANE_CENTER,
+  PLANE_LENGTH,
+  STAND_OFF,
+  WIDTH,
+  doorDepth,
+} from "./corridor";
 
 export type Topic = {
   id: string;
@@ -9,34 +30,6 @@ export type Topic = {
   badge: string;
   color: string;
 };
-
-/*
- * Geometria do corredor, em pixels do espaço 3D.
- *
- * Cada porta carrega a própria posição em Z, em vez de ser filha do plano da
- * parede: dentro de uma parede já rotacionada, o eixo local vira profundidade
- * e a conta deixa de ser óbvia — foi onde a primeira versão errou. Assim
- * `depth` é literalmente a distância até a boca do corredor, e o tamanho na
- * tela é PERSPECTIVE / (PERSPECTIVE + depth − câmera).
- */
-const PERSPECTIVE = 900;
-const WIDTH = 980; // vão entre as paredes
-const HEIGHT = 800; // pé-direito
-const LENGTH = 6400; // até onde o corredor vai
-const BEHIND = 500; // quanto das paredes fica atrás da câmera
-const DOOR_W = 340;
-const DOOR_H = 700;
-const FIRST_DOOR = 900;
-const SPACING = 1000; // entre portas do mesmo lado
-const STAND_OFF = 520; // onde a câmera para ao encarar uma porta
-
-const PLANE_LENGTH = LENGTH + BEHIND;
-const PLANE_CENTER = (BEHIND - LENGTH) / 2;
-
-/** Profundidade de cada porta: alternam entre esquerda e direita. */
-function doorDepth(index: number) {
-  return FIRST_DOOR + Math.floor(index / 2) * SPACING + (index % 2) * (SPACING / 2);
-}
 
 /**
  * Corredor em primeira pessoa: rolar o mouse anda para a frente.
@@ -103,7 +96,7 @@ export function Hallway({
   const open = (id: string) => {
     if (openingId) return;
     setOpeningId(id);
-    window.setTimeout(() => onOpen(id), 1200);
+    window.setTimeout(() => onOpen(id), 1500);
   };
 
   return (
@@ -135,7 +128,7 @@ export function Hallway({
         style={{
           transformStyle: "preserve-3d",
           opacity: openingId ? 0 : 1,
-          transition: "opacity 500ms ease-in 600ms",
+          transition: "opacity 520ms ease-in 900ms",
           // Este div cobre a viewport no plano da câmera, à frente de toda a
           // cena: sem isto, ele captura os cliques e nenhuma porta abre.
           pointerEvents: "none",
@@ -166,6 +159,39 @@ export function Hallway({
           className="hall-wall"
         />
 
+        <FloorRunner />
+
+        {/* Mobília entre as portas: sem ela o corredor é só parede e chão. */}
+        {[
+          { side: "left" as const, depth: 1400, art: "cesta" as const, caption: "quadra de bairro" },
+          { side: "right" as const, depth: 900, art: "codigo" as const, caption: "onde tudo começa" },
+          { side: "left" as const, depth: 2400, art: "disco" as const, caption: "trilha sonora" },
+          { side: "right" as const, depth: 1900, art: "coracao" as const, caption: "o que move" },
+          { side: "left" as const, depth: 3400, art: "cidade" as const, caption: "Osasco, SP" },
+          { side: "right" as const, depth: 2900, art: "cesta" as const, caption: "jogo de domingo" },
+          { side: "left" as const, depth: 4400, art: "codigo" as const, caption: "dia a dia" },
+          { side: "right" as const, depth: 3900, art: "disco" as const, caption: "no repeat" },
+        ].map((frame) => (
+          <WallFrame key={`${frame.side}-${frame.depth}`} {...frame} />
+        ))}
+
+        {[700, 1700, 2700, 3700, 4700].map((depth) => (
+          <CeilingLamp key={depth} depth={depth} />
+        ))}
+
+        {[
+          { side: "left" as const, depth: 1900 },
+          { side: "right" as const, depth: 2400 },
+          { side: "left" as const, depth: 3900 },
+        ].map((s) => (
+          <Sconce key={`${s.side}-${s.depth}`} {...s} />
+        ))}
+
+        <Bench side="right" depth={3400} />
+        <CorridorBall x={-310} depth={1250} />
+        <CorridorPlant x={330} depth={2150} />
+        <CorridorPlant x={-340} depth={3250} />
+
         {topics.map((topic, index) => {
           const left = index % 2 === 0;
           const depth = doorDepth(index);
@@ -179,16 +205,19 @@ export function Hallway({
               style={{
                 width: DOOR_W,
                 height: DOOR_H,
+                // A folha da porta gira em rotateY; sem preserve-3d aqui, o
+                // navegador achata esse giro e a porta abre "de papel".
+                transformStyle: "preserve-3d",
                 // Fica um pouco à frente da parede, assenta no piso e gira
                 // para encarar o miolo do corredor. Coplanar com a parede, o
                 // navegador resolvia o clique a favor do plano e a porta não
-                // abria. À direita, o rotateY negativo deixa o texto
-                // espelhado, e o scaleX(-1) desfaz isso.
+                // abria. O desespelhamento da parede direita é feito dentro da
+                // porta, não aqui: aqui ele brigaria com o preserve-3d.
                 transform: `translate(-50%, -50%) translate3d(${
                   left ? -WIDTH / 2 + 14 : WIDTH / 2 - 14
                 }px, ${HEIGHT / 2 - DOOR_H / 2}px, ${-depth}px) rotateY(${
                   left ? 90 : -90
-                }deg)${left ? "" : " scaleX(-1)"}`,
+                }deg)`,
               }}
             >
               <span className="sr-only">Abrir {topic.label}</span>

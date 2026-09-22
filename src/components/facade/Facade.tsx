@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BrickWall } from "./BrickWall";
 import { Door } from "./Door";
+import { PersonalTouches } from "./PersonalTouches";
 import { Planter, StonePath, Tree, Window } from "./Scenery";
 import { Sign } from "./Sign";
 
@@ -110,6 +111,7 @@ export function Facade({ onEnter }: { onEnter: () => void }) {
             <Window />
             <Planter />
             <StonePath />
+            <PersonalTouches />
           </g>
 
           <g filter="url(#ink-rough)">

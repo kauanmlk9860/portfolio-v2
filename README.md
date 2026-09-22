@@ -12,7 +12,9 @@ O portfólio é navegado como um lugar, não como uma página: **fachada → cor
 
 1. **Fachada** — a rua, com a porta principal. Parede de tijolos, adesivos das tecnologias, placa pendurada, árvore, janela, floreira e caminho de pedras.
 2. **Corredor** — uma porta por assunto, cada uma com placa e adesivo próprio. A faixa rola na horizontal.
-3. **Sala** — o conteúdo daquele assunto, pregado na parede.
+3. **Sala** — cada assunto tem o seu ambiente desenhado, com adereços próprios e a parede tingida pela cor daquela porta. O conteúdo rola por cima do cenário, que fica fixo ao fundo.
+
+Os ambientes são montados em torno do que o Kauan gosta — basquete, música, amor e programação: a cesta e a bola na sala de Projetos, a guitarra e os potes de `{ }` e `</>` em Habilidades, os discos e a caixa de som em Conteúdo, a carta lacrada com coração em Contato. Trocar os adereços de uma sala é mexer num componente só, em [`props.tsx`](src/components/rooms/props.tsx).
 
 Tudo é **SVG desenhado no código**. Não há imagem, modelo 3D nem biblioteca de animação; são `path` calculados.
 

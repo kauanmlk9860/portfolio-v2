@@ -44,7 +44,12 @@ export function Shell({
       )}
 
       {view.kind === "room" && current && (
-        <Room label={current.label} onBack={() => setView({ kind: "hallway" })}>
+        <Room
+          id={current.id}
+          label={current.label}
+          tint={current.color}
+          onBack={() => setView({ kind: "hallway" })}
+        >
           {rooms[current.id]}
         </Room>
       )}
